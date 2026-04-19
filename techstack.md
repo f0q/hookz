@@ -7,7 +7,7 @@
 | [Electron](https://www.electronjs.org) | v28 | Desktop app shell — creates the native window, menus, and IPC bridge between UI and system |
 | [electron-builder](https://www.electron.build) | v24 | Packages the app into a distributable `.app` bundle and `.dmg` installer for macOS |
 
----
+---d
 
 ## Frontend / UI
 
