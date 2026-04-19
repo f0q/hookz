@@ -11,12 +11,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   generatePreview: (videoPath, text, params) =>
     ipcRenderer.invoke('videos:preview', { videoPath, text, params }),
   listFonts: () => ipcRenderer.invoke('fonts:list'),
+  importHookTexts: () => ipcRenderer.invoke('hooks:importTexts'),
 
   listPresets:   ()             => ipcRenderer.invoke('presets:list'),
   savePreset:    (name, params) => ipcRenderer.invoke('presets:save', { name, params }),
   deletePreset:  (name)         => ipcRenderer.invoke('presets:delete', name),
-
-  importManifest: () => ipcRenderer.invoke('manifest:import'),
 
   onProgress: (callback) => {
     ipcRenderer.on('videos:progress', (event, data) => callback(data));

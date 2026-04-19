@@ -55,44 +55,6 @@ body {
   margin-top: 3px;
 }
 
-.app-header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  -webkit-app-region: drag;
-}
-
-.btn-import-manifest {
-  padding: 8px 16px;
-  background: rgba(124, 58, 237, 0.12);
-  border: 1px solid rgba(124, 58, 237, 0.4);
-  border-radius: 8px;
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
-  -webkit-app-region: no-drag;
-  flex-shrink: 0;
-}
-
-.btn-import-manifest:hover {
-  background: rgba(124, 58, 237, 0.22);
-  border-color: var(--accent);
-}
-
-.hook-item-warning {
-  font-size: 11px;
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-  border-radius: 4px;
-  padding: 4px 8px;
-  margin-top: 2px;
-}
-
-
 .app-main {
   flex: 1;
   padding: 24px 32px 40px;
@@ -131,6 +93,26 @@ body {
 
 .section-header .section-title {
   margin-bottom: 0;
+}
+
+.section-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+.btn-import {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-color: rgba(20, 184, 166, 0.5);
+  color: #14b8a6;
+}
+
+.btn-import:hover {
+  border-color: #14b8a6;
+  background: rgba(20, 184, 166, 0.08);
 }
 
 /* ── Video Selector ───────────────────────────────────────────────────── */

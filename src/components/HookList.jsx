@@ -1,7 +1,7 @@
 import React from 'react';
 import HookItem from './HookItem';
 
-export default function HookList({ hooks, onAddMultiple, onRemove, onUpdate, onUpdateParams, onApplyParamsToAll }) {
+export default function HookList({ hooks, onAddMultiple, onImportTexts, onRemove, onUpdate, onUpdateParams, onApplyParamsToAll }) {
   const handleAdd = async () => {
     const filePaths = await window.electronAPI.selectFiles({
       properties: ['openFile', 'multiSelections'],
@@ -16,9 +16,18 @@ export default function HookList({ hooks, onAddMultiple, onRemove, onUpdate, onU
     <div>
       <div className="section-header">
         <h2 className="section-title">Hook Videos</h2>
-        <button className="btn-add" onClick={handleAdd}>
-          + Add Hooks
-        </button>
+        <div className="section-header-actions">
+          <button
+            className="btn-secondary btn-import"
+            onClick={onImportTexts}
+            title="Import hook texts from a .json export file"
+          >
+            📥 Import Texts
+          </button>
+          <button className="btn-add" onClick={handleAdd}>
+            + Add Hooks
+          </button>
+        </div>
       </div>
 
       <div className="hook-list">

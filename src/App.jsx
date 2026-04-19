@@ -72,33 +72,45 @@ export default function App() {
   const applyParamsToAll = (params) =>
     setHooks((prev) => prev.map((h) => ({ ...h, textParams: { ...params } })));
 
-  // ── Manifest import ──────────────────────────────────────────────
+  // ── Import texts from .json file ─────────────────────────────────────────
 
-  const handleImportManifest = async () => {
-    const result = await window.electronAPI.importManifest();
-    if (!result || result.cancelled) return;
-    if (!result.success) {
-      setError(result.error);
+  const importTextsFromFile = async () => {
+    let imported;
+    try {
+      imported = await window.electronAPI.importHookTexts();
+    } catch (e) {
+      alert('Failed to read file: ' + e.message);
       return;
     }
+    if (!imported) return; // user cancelled
 
-    const newHooks = result.hooks.map((entry) =>
-      Object.assign(createHook(entry.found ? entry.resolvedPath : null), {
-        text: entry.text,
-        _notFound: !entry.found,
-        _filename: entry.filename,
-      })
-    );
+    setHooks((prev) => {
+      // Build a map from filename -> text for quick lookup
+      const byFilename = {};
+      imported.forEach((item) => {
+        if (item.filename) byFilename[item.filename] = item.text;
+      });
 
-    if (hooks.length > 0) {
-      const ok = window.confirm(
-        `Replace the existing ${hooks.length} hook(s) with ${newHooks.length} from the manifest?`
-      );
-      if (!ok) return;
-    }
+      // 1. Update existing hooks: match by video filename, fall back to positional index
+      const updated = prev.map((hook, idx) => {
+        const videoBasename = hook.videoPath ? hook.videoPath.split('/').pop() : null;
+        const matchedText =
+          (videoBasename && byFilename[videoBasename] !== undefined)
+            ? byFilename[videoBasename]
+            : (imported[idx] ? imported[idx].text : hook.text);
+        return { ...hook, text: matchedText };
+      });
 
-    setHooks(newHooks);
-    setError(null);
+      // 2. If the file has MORE entries than existing hooks, append empty slots
+      if (imported.length > prev.length) {
+        for (let i = prev.length; i < imported.length; i++) {
+          updated.push(createHook(null));
+          updated[updated.length - 1].text = imported[i].text;
+        }
+      }
+
+      return updated;
+    });
   };
 
   // ── Validation ───────────────────────────────────────────────────────────
@@ -154,17 +166,10 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <div className="app-header-row">
-          <div>
-            <h1>Hookz</h1>
-            <p className="app-subtitle">
-              Add text overlays to hook videos and concatenate with your main video
-            </p>
-          </div>
-          <button className="btn-import-manifest" onClick={handleImportManifest}>
-            ⬆️ Import Manifest
-          </button>
-        </div>
+        <h1>Video Mixer</h1>
+        <p className="app-subtitle">
+          Add text overlays to hook videos and concatenate with your main video
+        </p>
       </header>
 
       <main className="app-main">
@@ -181,6 +186,7 @@ export default function App() {
           <HookList
             hooks={hooks}
             onAddMultiple={addMultipleHooks}
+            onImportTexts={importTextsFromFile}
             onRemove={removeHook}
             onUpdate={updateHook}
             onUpdateParams={updateHookParams}
