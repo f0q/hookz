@@ -16,6 +16,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   savePreset:    (name, params) => ipcRenderer.invoke('presets:save', { name, params }),
   deletePreset:  (name)         => ipcRenderer.invoke('presets:delete', name),
 
+  importManifest: () => ipcRenderer.invoke('manifest:import'),
+
   onProgress: (callback) => {
     ipcRenderer.on('videos:progress', (event, data) => callback(data));
   },

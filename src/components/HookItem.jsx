@@ -25,8 +25,14 @@ export default function HookItem({ hook, index, canRemove, onRemove, onUpdate, o
       <VideoSelector
         filePath={hook.videoPath}
         onSelect={handleSelectVideo}
-        placeholder="Select hook video…"
+        placeholder={hook._notFound ? `⚠ File not found: ${hook._filename}` : 'Select hook video…'}
       />
+
+      {hook._notFound && (
+        <div className="hook-item-warning">
+          ⚠ Video file not found: <strong>{hook._filename}</strong> — click above to locate it manually.
+        </div>
+      )}
 
       <div className="text-input-group">
         <label className="text-input-label">Text Overlay (Shift+Enter for new line)</label>

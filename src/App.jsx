@@ -72,6 +72,35 @@ export default function App() {
   const applyParamsToAll = (params) =>
     setHooks((prev) => prev.map((h) => ({ ...h, textParams: { ...params } })));
 
+  // ── Manifest import ──────────────────────────────────────────────
+
+  const handleImportManifest = async () => {
+    const result = await window.electronAPI.importManifest();
+    if (!result || result.cancelled) return;
+    if (!result.success) {
+      setError(result.error);
+      return;
+    }
+
+    const newHooks = result.hooks.map((entry) =>
+      Object.assign(createHook(entry.found ? entry.resolvedPath : null), {
+        text: entry.text,
+        _notFound: !entry.found,
+        _filename: entry.filename,
+      })
+    );
+
+    if (hooks.length > 0) {
+      const ok = window.confirm(
+        `Replace the existing ${hooks.length} hook(s) with ${newHooks.length} from the manifest?`
+      );
+      if (!ok) return;
+    }
+
+    setHooks(newHooks);
+    setError(null);
+  };
+
   // ── Validation ───────────────────────────────────────────────────────────
 
   const isValid =
@@ -125,10 +154,17 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Video Mixer</h1>
-        <p className="app-subtitle">
-          Add text overlays to hook videos and concatenate with your main video
-        </p>
+        <div className="app-header-row">
+          <div>
+            <h1>Hookz</h1>
+            <p className="app-subtitle">
+              Add text overlays to hook videos and concatenate with your main video
+            </p>
+          </div>
+          <button className="btn-import-manifest" onClick={handleImportManifest}>
+            ⬆️ Import Manifest
+          </button>
+        </div>
       </header>
 
       <main className="app-main">

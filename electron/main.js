@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
+
 const { processVideos, stopProcessing, generatePreview, listFonts } = require('./processor');
 
 // ─── Preset storage ───────────────────────────────────────────────────────────
@@ -128,4 +129,44 @@ ipcMain.handle('videos:preview', async (event, { videoPath, text, params }) => {
   } catch (e) {
     return { success: false, error: e.message };
   }
+});
+
+// ─── Manifest import ─────────────────────────────────────────────────────────
+
+ipcMain.handle('manifest:import', async () => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ['openFile'],
+    filters: [{ name: 'Hookz Manifest', extensions: ['hookz.json', 'json'] }],
+    title: 'Import Hookz Manifest',
+  });
+  if (result.canceled || !result.filePaths[0]) return { success: false, cancelled: true };
+
+  const manifestPath = result.filePaths[0];
+  const manifestDir  = path.dirname(manifestPath);
+
+  let parsed;
+  try {
+    parsed = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  } catch (e) {
+    return { success: false, error: 'Invalid manifest file — could not parse JSON.' };
+  }
+
+  if (!parsed.version || parsed.version !== '1') {
+    return { success: false, error: `Unsupported manifest version: "${parsed.version}". Expected "1".` };
+  }
+  if (!Array.isArray(parsed.hooks) || parsed.hooks.length === 0) {
+    return { success: false, error: 'Manifest contains no hooks.' };
+  }
+
+  const hooks = parsed.hooks.map((entry) => {
+    const resolvedPath = path.join(manifestDir, entry.filename);
+    return {
+      filename:     entry.filename,
+      resolvedPath: resolvedPath,
+      found:        fs.existsSync(resolvedPath),
+      text:         entry.text || '',
+    };
+  });
+
+  return { success: true, hooks, manifestDir };
 });
