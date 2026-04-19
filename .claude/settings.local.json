@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm show:*)",
+      "Bash(node -e \"try { const f = require\\('ffmpeg-static'\\); console.log\\('ffmpeg-static path:', f\\); } catch\\(e\\) { console.log\\('not installed globally'\\); }\")",
+      "Bash(node -e \"try { const f = require\\('ffprobe-static'\\); console.log\\('ffprobe-static path:', f.path\\); } catch\\(e\\) { console.log\\('not installed globally'\\); }\")",
+      "Bash(node -e \"const os=require\\('os'\\); console.log\\('tmpdir:', os.tmpdir\\(\\)\\)\")",
+      "Bash(node -e ':*)",
+      "Bash(node -e \"const e = require\\('electron'\\); console.log\\(typeof e, JSON.stringify\\(Object.keys\\(e || {}\\)\\).slice\\(0,200\\)\\)\")",
+      "Bash(./node_modules/electron/dist/Electron.app/Contents/MacOS/Electron .)"
+    ]
+  }
+}

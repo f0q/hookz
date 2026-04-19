@@ -1,0 +1,80 @@
+{
+  "name": "hookz",
+  "version": "1.0.0",
+  "description": "Add text overlays to hook videos and concatenate with a main video",
+  "author": "Jamal The Creator",
+  "main": "electron/main.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "npm run build && open ./node_modules/electron/dist/Electron.app --args \"$PWD\"",
+    "dev": "concurrently \"webpack --watch\" \"wait-on dist/index.html && open ./node_modules/electron/dist/Electron.app --args '$PWD'\"",
+    "package": "npm run build && electron-builder --mac --dir --arm64",
+    "package:dmg": "npm run build && electron-builder --mac --arm64"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "@babel/preset-react": "^7.22.0",
+    "babel-loader": "^9.1.0",
+    "concurrently": "^8.2.0",
+    "css-loader": "^6.8.0",
+    "electron-builder": "^24.13.3",
+    "html-webpack-plugin": "^5.5.0",
+    "style-loader": "^3.3.0",
+    "wait-on": "^7.2.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.0"
+  },
+  "build": {
+    "appId": "com.hookz.app",
+    "productName": "Hookz",
+    "icon": "assets/icon.icns",
+    "mac": {
+      "category": "public.app-category.video",
+      "icon": "assets/icon.icns",
+      "target": [
+        {
+          "target": "dir",
+          "arch": ["arm64"]
+        },
+        {
+          "target": "dmg",
+          "arch": ["arm64"]
+        }
+      ]
+    },
+    "dmg": {
+      "icon": "assets/icon.icns",
+      "iconSize": 128,
+      "contents": [
+        { "x": 380, "y": 170, "type": "link", "path": "/Applications" },
+        { "x": 130, "y": 170, "type": "file" }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      }
+    },
+    "files": [
+      "dist/**",
+      "electron/**",
+      "node_modules/**",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/ffmpeg-static/**",
+      "node_modules/ffprobe-static/**"
+    ],
+    "directories": {
+      "output": "release"
+    }
+  }
+}
