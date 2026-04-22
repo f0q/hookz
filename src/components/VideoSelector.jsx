@@ -4,7 +4,7 @@ export default function VideoSelector({ filePath, onSelect, placeholder, isDirec
   const displayName = filePath
     ? isDirectory
       ? filePath
-      : filePath.split('/').pop()
+      : filePath.replace(/\\/g, '/').split('/').pop()
     : null;
 
   return (

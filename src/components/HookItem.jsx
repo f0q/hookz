@@ -6,7 +6,7 @@ export default function HookItem({ hook, index, canRemove, onRemove, onUpdate, o
   const handleSelectVideo = async () => {
     const filePath = await window.electronAPI.selectFile({
       properties: ['openFile'],
-      filters: [{ name: 'Video', extensions: ['mp4', 'mov', 'avi', 'mkv', 'webm'] }],
+      filters: [{ name: 'Video', extensions: ['mp4', 'mov', 'avi', 'mkv', 'webm', 'm4v'] }],
     });
     if (filePath) onUpdate({ videoPath: filePath });
   };

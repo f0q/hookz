@@ -40,7 +40,7 @@ export default function App() {
   const selectMainVideo = async () => {
     const filePath = await window.electronAPI.selectFile({
       properties: ['openFile'],
-      filters: [{ name: 'Video', extensions: ['mp4', 'mov', 'avi', 'mkv', 'webm'] }],
+      filters: [{ name: 'Video', extensions: ['mp4', 'mov', 'avi', 'mkv', 'webm', 'm4v'] }],
     });
     if (filePath) setMainVideo(filePath);
   };
@@ -93,7 +93,7 @@ export default function App() {
 
       // 1. Update existing hooks: match by video filename, fall back to positional index
       const updated = prev.map((hook, idx) => {
-        const videoBasename = hook.videoPath ? hook.videoPath.split('/').pop() : null;
+        const videoBasename = hook.videoPath ? hook.videoPath.replace(/\\/g, '/').split('/').pop() : null;
         const matchedText =
           (videoBasename && byFilename[videoBasename] !== undefined)
             ? byFilename[videoBasename]
@@ -226,7 +226,7 @@ export default function App() {
             </h2>
             {results.map((r) => (
               <div key={r.taskIndex} className="result-item">
-                <span className="result-path">{r.outputPath.split('/').pop()}</span>
+                <span className="result-path">{r.outputPath.replace(/\\/g, '/').split('/').pop()}</span>
                 <button
                   className="btn-secondary"
                   onClick={() => window.electronAPI.showInFolder(r.outputPath)}

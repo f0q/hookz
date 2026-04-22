@@ -40,11 +40,15 @@ const POSITION_MAP = {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const SYSTEM_FONT_DIRS = [
-  '/Library/Fonts',
-  '/System/Library/Fonts',
-  path.join(os.homedir(), 'Library', 'Fonts'),
-];
+const SYSTEM_FONT_DIRS = process.platform === 'win32'
+  ? [ path.join(process.env.WINDIR || 'C:\\Windows', 'Fonts') ]
+  : process.platform === 'darwin'
+  ? [
+      '/Library/Fonts',
+      '/System/Library/Fonts',
+      path.join(os.homedir(), 'Library', 'Fonts'),
+    ]
+  : [ '/usr/share/fonts', path.join(os.homedir(), '.fonts') ];
 
 function getFontPath() {
   const candidates = {
@@ -81,7 +85,7 @@ function listFonts() {
  * Only the path itself needs quoting — text content goes via textfile= (no escaping needed).
  */
 function escapePath(p) {
-  return p.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  return p.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/:/g, '\\:');
 }
 
 function probeVideo(filePath) {
@@ -247,7 +251,7 @@ async function concatenateVideos(hookPath, mainPath, outputPath, onProgress) {
     const outputOpts = [
       '-map [outv]',
       '-map [outa]',
-      '-c:v h264_videotoolbox',
+      '-c:v', process.platform === 'darwin' ? 'h264_videotoolbox' : 'libx264',
       `-b:v ${targetBitrate}k`,
       '-c:a aac',
       '-b:a 320k',
@@ -330,7 +334,7 @@ async function processVideos(tasks, sendProgress) {
       const taskBase   = (i / N) * 100;
       const taskWeight = 100 / N;
 
-      const hookBasename   = task.hookVideo.split('/').pop().replace(/\.[^.]+$/, '');
+      const hookBasename   = task.hookVideo.replace(/\\/g, '/').split('/').pop().replace(/\.[^.]+$/, '');
       const outputFilename = `${hookBasename}_mixed_${Date.now()}.mp4`;
       const outputPath     = path.join(task.outputDir, outputFilename);
       const tempHookPath   = path.join(tempDir, `hook_${i}.mov`);

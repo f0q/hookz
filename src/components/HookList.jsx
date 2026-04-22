@@ -5,7 +5,7 @@ export default function HookList({ hooks, onAddMultiple, onImportTexts, onRemove
   const handleAdd = async () => {
     const filePaths = await window.electronAPI.selectFiles({
       properties: ['openFile', 'multiSelections'],
-      filters: [{ name: 'Video', extensions: ['mp4', 'mov', 'avi', 'mkv', 'webm'] }],
+      filters: [{ name: 'Video', extensions: ['mp4', 'mov', 'avi', 'mkv', 'webm', 'm4v'] }],
     });
     if (filePaths && filePaths.length > 0) {
       onAddMultiple(filePaths);
